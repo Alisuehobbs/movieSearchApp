@@ -1,0 +1,19 @@
+
+<div ng-repeat="movie in movies">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="media">
+        <div class="media-left">
+          <img class="media-object" ng-src={{movie.Poster}}>
+        </div>
+        <div class="media-body">
+          <h3 class="media-heading">{{movie.Title}} {{movie.Year}}</h3>
+
+          <button type="button" class="btn btn-default" ng-click="showMore(movie)">Show More</button>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
