@@ -2,41 +2,32 @@
 
 const app = angular.module("movieSearchApp", ['ngRoute'])
 
-app.factory("moviesService", moviesService)
+app.controller("MoviesController", function($scope, $http, $location) {
 
-app.controller("Controller", ($scope, $http, $location, moviesService) => {
-
-  $scope.submitSearch = function(searchTerm) {
-    console.log('searchTerm:', searchTerm);
-      $location.url('/movies')
+    $scope.submitSearch = function(searchTerm) {
+        $http.get(`http://www.omdbapi.com/?s=${searchTerm}`).then(function(object) {
+            $scope.movies = object.data.Search;
+            $location.url('/movies')
+        })
     }
 })
 
-app.config(($routeProvider) => {
+app.controller("MovieController", function ($scope, $http, $location, $routeParams, $log) {
+  const id = $routeParams.id;
+
+    $http.get(`http://www.omdbapi.com/?i=${id}`).then((movie) => {
+      $scope.movie = movie.data
+    })
+})
+
+app.config(function($routeProvider) {
     $routeProvider
         .when('/movies', {
-            templateUrl: 'movies.html',
-            controller: 'MovieSearchController'
+            templateUrl: './views/movies.html',
+            controller: 'MoviesController'
         })
-        .when('/movie', {
-            templateUrl: 'movie.html',
+        .when('/movie/:id', {
+            templateUrl: './views/movie.html',
             controller: 'MovieController'
         })
 });
-
-app.controller("MovieSearchController", ($scope, $http, $location, moviesService) => {
-
-  moviesService.getMovies.then((object) => {
-    $scope.movies = object.data.Search;
-  })
-
-})
-
-app.controller("MovieController", ($scope, $http) => {
-    $scope.showMore = function(movie) {
-        $http.get(`http://www.omdbapi.com/?i=${movie.imdbID}`).then((movieObject) => {
-            console.log('movieObject.data:', movieObject.data);
-            $scope.movieInfo = movieObject.data
-        })
-    }
-})
